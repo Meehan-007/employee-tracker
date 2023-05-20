@@ -1,11 +1,11 @@
-const mysql = require('mysql2');
+import mysql from 'mysql2';
 
 
   const connection = mysql.createConnection({
     host: 'localhost', // Replace with your database host 
     port: 3306, 
     user: 'root', // Replace with your database username
-    password: 'root', // Replace with your database password
+    password: 'Root122!', // Replace with your database password
     database: 'Manager' // Replace with your database name
   });
 
@@ -18,4 +18,4 @@ const mysql = require('mysql2');
   });
 
 
-module.exports = connection;
+export default connection;

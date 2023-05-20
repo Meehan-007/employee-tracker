@@ -1,5 +1,9 @@
 import inquirer from 'inquirer';
-// const inquirer = require('inquirer');
+import consoleTable from 'console.table';
+import connection from './DB/connection.mjs'; 
+// const connection = require('./DB/connection.js');
+
+
 
  function init() {
     return inquirer.prompt([
@@ -83,6 +87,8 @@ function viewDepartments(){
     // WHEN I choose to view all departments
 // THEN I am presented with a formatted table showing department names and department ids
     console.log("now viewing departments") 
+    var sql = connection.query('SELECT * FROM Departments') 
+    consoleTable(sql);
     init();
 } 
 
