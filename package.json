@@ -1,0 +1,25 @@
+{
+  "name": "hw12sql",
+  "version": "1.0.0",
+  "description": "", 
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1", 
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Meehan-007/employee-tracker.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Meehan-007/employee-tracker/issues"
+  },
+  "homepage": "https://github.com/Meehan-007/employee-tracker#readme",
+  "dependencies": {
+    "inquirer": "^9.2.5",
+    "mysql2": "^3.3.1"
+  }
+}
