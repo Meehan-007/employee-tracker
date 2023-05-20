@@ -84,26 +84,50 @@ import connection from './DB/connection.mjs';
 
 
 function viewDepartments(){ 
-    // WHEN I choose to view all departments
-// THEN I am presented with a formatted table showing department names and department ids
-    console.log("now viewing departments") 
-    var sql = connection.query('SELECT * FROM Departments') 
-    consoleTable(sql);
-    init();
+ 
+    console.log("Now viewing departments");
+
+connection.query('SELECT * FROM departments', (err, result) => {
+  if (err) {
+    console.error('Error retrieving departments:', err);
+    return;
+  }
+
+  console.table(result);
+  init(); 
+});
 } 
 
 function viewRoles(){ 
-    // WHEN I choose to view all roles
-// THEN I am presented with the job title, role id, the department that role belongs to, and the salary for that role
-    console.log("now viewing roles") 
-    init();
+   
+    console.log("Now viewing roles");
+
+connection.query('SELECT roles.*, departments.name AS department FROM roles JOIN departments ON roles.department_id = departments.id;', (err, result) => {
+  if (err) {
+    console.error('Error retrieving roles:', err);
+    return;
+  }
+
+  console.table(result);
+  init(); 
+}); 
+
 } 
 
 function viewEmployees(){ 
-    // WHEN I choose to view all employees
-// THEN I am presented with a formatted table showing employee data, including employee ids, first names, last names, job titles, departments, salaries, and managers that the employees report to
-    console.log("now viewing employees") 
-    init();
+    
+    console.log("Now viewing employees");
+
+connection.query('SELECT employee.*, roles.title AS role, departments.name AS department, roles.salary AS salary FROM employee LEFT JOIN roles ON employee.role_id = roles.id LEFT JOIN departments ON roles.department_id = departments.id;', (err, result) => {
+  if (err) {
+    console.error('Error retrieving departments:', err);
+    return;
+  }
+
+  console.table(result);
+  init(); 
+}); 
+
 } 
 
 function addEmployees(){ 

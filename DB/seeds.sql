@@ -17,7 +17,7 @@ VALUES
 ('front-end engineer', 145000, 5),
 ('back-end engineer', 160000, 5),
 ('full stack generalist', 120000, 5),
-('web developer', 95000, 5),
+('web developer', 95000, 5);
 
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
@@ -28,4 +28,4 @@ VALUES
 ('Ariana', 'Grande', 4, NULL),
 ('Dua', 'Lipa', 5, NULL),
 ('Toni', 'Braxton', 6, NULL),
-('Lana', 'DelRay', 7, 6),
+('Lana', 'DelRay', 7, 6);
