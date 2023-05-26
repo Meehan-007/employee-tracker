@@ -126,14 +126,95 @@ connection.query(`SELECT e1.*, roles.title AS role, departments.name AS departme
 
 } 
 
-function addEmployees(){ 
- 
+function addEmployees() {
+    connection.query('SELECT employee.id, CONCAT(first_name, " ", last_name) AS Name, roles.title, role_id FROM employee LEFT JOIN roles ON employee.id = roles.id', function (err, result) {
+      if (err) {
+        console.error('Error executing query:', err);
+        return;
+      }
+  
+      console.log(result);
+  
+      var roles = result.map((item) => {
+        return {
+          id: item.role_id
+          ,
+          title: item.title
+        };
+      });
+      console.log(roles); 
+      var employees = result.map((item) => {
+          return{
+              id: item.id, 
+              name: item.Name
+          }
+      });
+      console.log(employees); 
+       
 
-// WHEN I choose to add an employee
-// THEN I am prompted to enter the employee’s first name, last name, role, and manager, and that employee is added to the database
-    console.log("add employees") 
-    init();
-} 
+      inquirer
+      .prompt([
+        {
+          type: 'input',
+          name: 'firstname',
+          message: 'what is their first name?',
+        }, 
+        {
+          type: 'input',
+          name: 'lastname',
+          message: 'what is their last name?',
+        }, 
+        {
+          type: 'list',
+          name: 'role',
+          message: 'what is their role?',
+          choices: roles
+        }, 
+        {
+            type: 'list',
+            name: 'manager',
+            message: 'who is there manager?',
+            choices: employees
+          }
+     
+      ]).then(function (answers) {
+          
+          let roleid 
+          let managerid
+        
+          for (var i = 0; i < roles.length; i++) { 
+              
+             if (answers.role === roles[i].title){
+                   roleid = role[i].id
+             } 
+          } 
+
+          for (var i = 0; i < employees.length; i++) { 
+              
+            if (answers.manager === employees[i].name){
+                  managerid = employees[i].id
+            } 
+         } 
+
+          connection.query(
+            'INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?)',
+            [answers.firstname, answers.lastname, roleid, managerid],
+            function (err, result) {
+              if (err) {
+                console.error('Error executing query:', err);
+                return;
+              }
+  
+              console.log('Role added successfully!');
+              init();
+            });
+          })
+        .catch(function (error) {
+          console.error('Error occurred during prompt:', error);
+        });
+      });
+  }
+  
 
 function addRoles(){  
 
