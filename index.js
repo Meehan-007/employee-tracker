@@ -327,12 +327,100 @@ function addDepartments(){
 
 function updateEmployees(){ 
 
-// WHEN I choose to update an employee role
-// THEN I am prompted to select an employee to update and their new role and this information is updated in the database 
+    connection.query('SELECT employee.id, CONCAT(first_name, " ", last_name) AS Name, roles.title, role_id FROM employee LEFT JOIN roles ON employee.id = roles.id', function (err, result) {
+        if (err) {
+          console.error('Error executing query:', err);
+          return;
+        }
+    
+        console.log(result); 
+        var role = result.map((item) => item.title);
+    
+      var roles = result.map((item) => {
+          return {
+            id: item.role_id,
+            title: item.title
+          };
+        });
+        console.log(roles); 
+        var employees = result.map((item) => {
+            return{
+                id: item.id, 
+                name: item.Name
+            }
+        });
+        console.log(employees); 
+         
+  
+        inquirer
+        .prompt([
+          {
+            type: 'list',
+            name: 'employee',
+            message: 'which employee do you want to update?', 
+            choices: employees
+          }, 
+          {
+            type: 'list',
+            name: 'role',
+            message: 'what is their new role?',
+            choices: role
+          }, 
+          {
+              type: 'list',
+              name: 'manager',
+              message: 'who is there manager now?',
+              choices: employees
+            }
+       
+        ]).then(function (answers) {
+            
+            let roleid 
+            let employeeid 
+            let managerid
+          console.log("answers-role:", answers.role); 
+          console.log()
+            for (var i = 0; i < roles.length; i++) { 
+                
+               if (answers.role === roles[i].title){
+                     roleid = roles[i].id 
+                     console.log("role_id", roleid)
+               } 
+            } 
+  
+            for (var i = 0; i < employees.length; i++) { 
+                
+              if (answers.employee === employees[i].name){
+                    employeeid = employees[i].id 
+                    console.log("employe:", employeeid)
+              } 
+           }  
 
-    console.log("update employees") 
-    init();
-}
-
+           for (var i = 0; i < employees.length; i++) { 
+                
+            if (answers.manager === employees[i].name){
+                  managerid = employees[i].id 
+                  console.log("manager:", managerid)
+            } 
+         } 
+  
+            connection.query(
+                'UPDATE employee SET role_id = ?, manager_id = ? WHERE employee.id = ?',
+                [roleid, managerid, employeeid],
+              function (err, result) {
+                if (err) {
+                  console.error('Error executing query:', err);
+                  return;
+                }
+    
+                console.log('Role added successfully!');
+                init();
+              });
+            })
+          .catch(function (error) {
+            console.error('Error occurred during prompt:', error);
+          });
+        });
+    }
 
 init()
