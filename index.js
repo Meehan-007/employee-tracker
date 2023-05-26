@@ -6,7 +6,7 @@ import connection from './DB/connection.mjs';
 
 
  function init() {
-    return inquirer.prompt([
+     inquirer.prompt([
         {
             // this displays a menu for the users to choose which action they want to take
             type: 'list',
@@ -67,11 +67,7 @@ import connection from './DB/connection.mjs';
         process.exit(); 
     }  
 
-    // else {
-    //     console.log("syntax error") 
-    //     console.log(answers.item); 
-    //     init();
-    // }
+  
 
    
     })
@@ -118,7 +114,7 @@ function viewEmployees(){
     
     console.log("Now viewing employees");
 
-connection.query('SELECT employee.*, roles.title AS role, departments.name AS department, roles.salary AS salary FROM employee LEFT JOIN roles ON employee.role_id = roles.id LEFT JOIN departments ON roles.department_id = departments.id;', (err, result) => {
+connection.query(`SELECT e1.*, roles.title AS role, departments.name AS department, roles.salary AS salary, CONCAT(e2.first_name, ' ', e2.last_name) AS Manager FROM employee e1 LEFT JOIN roles ON e1.role_id = roles.id LEFT JOIN departments ON roles.department_id = departments.id LEFT JOIN employee e2 ON e2.id = e1.Manager_id`, (err, result) => {
   if (err) {
     console.error('Error retrieving departments:', err);
     return;
@@ -148,10 +144,52 @@ function addRoles(){
 } 
 
 function addDepartments(){ 
-       // WHEN I choose to add a department
-// THEN I am prompted to enter the name of the department and that department is added to the database 
-    console.log("add department") 
-    init();
+      
+
+    // connection.query('SELECT * FROM departments', function (err, result) {
+    //     if (err) {
+    //       console.error('Error executing query:', err);
+    //       return;
+    //     }
+      
+    //     console.log(result);
+       
+   
+
+    inquirer
+  .prompt([
+    {
+      type: 'input',
+      name: 'department',
+      message: 'What department do you want to add?',
+    },
+  ])
+  .then(function (answers) {
+    console.log('Department to add:', answers.department);
+
+    // Insert the department into the database
+    connection.query(
+      'INSERT INTO departments (name) VALUES (?)',
+      [answers.department],
+      function (err, result) {
+        if (err) {
+          console.error('Error executing query:', err);
+          return;
+        }
+        console.log('Department added successfully!');
+        // Perform any additional actions after inserting the department
+        // ... 
+        init();
+      }
+    );
+  })
+  .catch(function (error) {
+    console.error('Error occurred during prompt:', error);
+  });
+
+       
+    
+   
 } 
 
 function updateEmployees(){ 
