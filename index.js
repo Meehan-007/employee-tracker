@@ -135,26 +135,75 @@ function addEmployees(){
     init();
 } 
 
-function addRoles(){ 
+function addRoles(){  
 
-// WHEN I choose to add a role
-// THEN I am prompted to enter the name, salary, and department for the role and that role is added to the database
-    console.log("add roles") 
-    init();
-} 
+    connection.query('SELECT * FROM departments', function (err, result) {
+        if (err) {
+          console.error('Error executing query:', err);
+          return;
+        }
+      
+        console.log(result); 
+        var department = result 
+        console.log(department);
+
+       
+
+        inquirer
+        .prompt([
+          {
+            type: 'input',
+            name: 'roleName',
+            message: 'What role do you want to add?',
+          }, 
+          {
+            type: 'input',
+            name: 'salary',
+            message: 'How much bread do they make?',
+          }, 
+          {
+            
+            type: 'list',
+            name: 'departments',
+            message: 'which depertment does it belong to?',
+            choices: department
+          }
+       
+        ]).then(function (answers) {
+            console.log('Role Name:', answers.roleName);
+            console.log('Salary:', answers.salary);
+            let deptid
+          
+            for (var i = 0; i < department.length; i++) { 
+                
+               if (answers.departments === department[i].name){
+                     deptid = department[i].id
+               } 
+            }
+  
+            console.log("selecteddepertment:", deptid); 
+         
+
+            connection.query(
+              'INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?)',
+              [answers.roleName, answers.salary, deptid],
+              function (err, result) {
+                if (err) {
+                  console.error('Error executing query:', err);
+                  return;
+                }
+    
+                console.log('Role added successfully!');
+                init();
+              });
+            })
+          .catch(function (error) {
+            console.error('Error occurred during prompt:', error);
+          });
+        });
+    }
 
 function addDepartments(){ 
-      
-
-    // connection.query('SELECT * FROM departments', function (err, result) {
-    //     if (err) {
-    //       console.error('Error executing query:', err);
-    //       return;
-    //     }
-      
-    //     console.log(result);
-       
-   
 
     inquirer
   .prompt([
@@ -186,11 +235,10 @@ function addDepartments(){
   .catch(function (error) {
     console.error('Error occurred during prompt:', error);
   });
-
-       
-    
    
-} 
+}
+
+
 
 function updateEmployees(){ 
 
@@ -202,10 +250,4 @@ function updateEmployees(){
 }
 
 
-
-
-
-
-
-
-init(); 
+init()
