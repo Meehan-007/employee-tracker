@@ -127,18 +127,19 @@ connection.query(`SELECT e1.*, roles.title AS role, departments.name AS departme
 } 
 
 function addEmployees() {
+    
     connection.query('SELECT employee.id, CONCAT(first_name, " ", last_name) AS Name, roles.title, role_id FROM employee LEFT JOIN roles ON employee.id = roles.id', function (err, result) {
       if (err) {
         console.error('Error executing query:', err);
         return;
       }
   
-      console.log(result);
+      console.log(result); 
+      var role = result.map((item) => item.title);
   
-      var roles = result.map((item) => {
+    var roles = result.map((item) => {
         return {
-          id: item.role_id
-          ,
+          id: item.role_id,
           title: item.title
         };
       });
@@ -168,7 +169,7 @@ function addEmployees() {
           type: 'list',
           name: 'role',
           message: 'what is their role?',
-          choices: roles
+          choices: role
         }, 
         {
             type: 'list',
@@ -181,23 +182,26 @@ function addEmployees() {
           
           let roleid 
           let managerid
-        
+        console.log("answers-role:", answers.role); 
+        console.log()
           for (var i = 0; i < roles.length; i++) { 
               
              if (answers.role === roles[i].title){
-                   roleid = role[i].id
+                   roleid = roles[i].id 
+                   console.log("role_id", roleid)
              } 
           } 
 
           for (var i = 0; i < employees.length; i++) { 
               
             if (answers.manager === employees[i].name){
-                  managerid = employees[i].id
+                  managerid = employees[i].id 
+                  console.log("manager:", managerid)
             } 
          } 
 
           connection.query(
-            'INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?)',
+            'INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)',
             [answers.firstname, answers.lastname, roleid, managerid],
             function (err, result) {
               if (err) {
